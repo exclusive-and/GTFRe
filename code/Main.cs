@@ -9,7 +9,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
 
-[BepInPlugin ("GTFR:evolution", "GTFR:evolution", "1.0.0")]
+[BepInPlugin ("GTFRevolution", "GTFRevolution", "1.0.0")]
 public class Main : BasePlugin
 {
     public override void Load() => HahaInternal.HahaFunny(Log);
@@ -86,9 +86,9 @@ internal class HahaInternal : MonoBehaviour
     {
         OnStartGame += () =>
         {
-            var config = new Configuration ();
+            var config = new Configuration();
 
-            log.LogInfo ("Haha Serious Main >:(");
+            log.LogInfo("Haha Serious Main >:(");
 
             /*
             var ingameLayouts = LevelLayoutDataBlock.GetAllBlocks();
@@ -103,9 +103,8 @@ internal class HahaInternal : MonoBehaviour
             FunnyRundown.CreateFunnyRundown(log, vanillaLayouts, scans);
             */
 
-            var transfer = new ChromosomeTransfer();
 
-            GeneticRundown.CreateGeneticRundown(log, transfer);
+            GeneticRundown.CreateGeneticRundown(log);
         };
     }
 
@@ -128,12 +127,12 @@ internal class HahaInternal : MonoBehaviour
 
         var harmony = new Harmony("gtfr:e");
 
-        harmony.Patch (
+        harmony.Patch(
             typeof(StartMainGame).GetMethod("Start"),
             postfix: new HarmonyMethod(typeof(HahaInternal).GetMethod("CallOnStartGame"))
         );
             
-        harmony.Patch (
+        harmony.Patch(
             typeof(RundownManager).GetMethod("SetActiveExpedition"),
             prefix: new HarmonyMethod(typeof(HahaInternal).GetMethod("CallOnSetActiveExpedition"))
         );
