@@ -6,7 +6,7 @@
 
     <PropertyGroup>
         <RootNamespace>GTFR</RootNamespace>
-        <AssemblyName>GTFR</AssemblyName>
+        <AssemblyName>GTFRevolution</AssemblyName>
 
         <PluginOutputPath>../output/GTFRe/plugins</PluginOutputPath>
         <CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
@@ -83,5 +83,22 @@
 			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')"/>
 
 		<Message Text="Assembly has been copied to Output Folder!" Importance="High"/>
+	</Target>
+
+	<Target Name="CopyOutputFilesToPluginFolder" AfterTargets="CopyAssemblyAfterBuild" Condition="$(CopyBuildToPluginFolder) == 'true'">
+		<Message Text="Copying Output to Plugins Folder..." />
+		<MakeDir Directories="$(PluginsPath)\$(AssemblyName)" Condition="!Exists('$(PluginsPath)\$(AssemblyName)')"  />
+		<ItemGroup>
+			<OutputFilesToCopy Include="$(PluginOutputPath)\**\*.*" />
+		</ItemGroup>
+		<Copy
+				SourceFiles="@(OutputFilesToCopy)"
+				DestinationFolder="$(PluginsPath)\$(AssemblyName)\%(RecursiveDir)"
+				SkipUnchangedFiles="true"
+				OverwriteReadOnlyFiles="true"
+				Retries="3"
+				RetryDelayMilliseconds="300"/>
+
+		<Message Text="Output has been copied to Plugins Folder!" Importance="High"/>
 	</Target>
 </Project>
