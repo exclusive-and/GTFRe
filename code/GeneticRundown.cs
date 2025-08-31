@@ -13,58 +13,157 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppInterop.Runtime.Runtime;
 using System.Collections;
+using CellMenu;
+using AK.Wwise;
+using Il2CppSystem.Xml;
 
 public class GeneticRundown : UnityEngine.MonoBehaviour
 {
+    // See Note [In Search of Closures] in GTFR.Main.
+
+    private delegate bool TryStartLevel_t(ref bool __result);
+
+    private static TryStartLevel_t OnTryStartLevel;
+    public static bool CallOnTryStartLevel(ref bool __result) => OnTryStartLevel(ref __result);
+
+    private static Action OnStartLevelBuild;
+    public static void CallOnStartLevelBuild() => OnStartLevelBuild();
+
+    private static Action<CM_PageLoadout> OnUpdateReadyState;
+
+    public static void CallOnUpdateReadyState(CM_PageLoadout __instance) => OnUpdateReadyState(__instance);
+
+    static GeneticRundown()
+    {
+        OnTryStartLevel = (ref bool __result) =>
+        {
+            __result = false;
+            return false;
+        };
+
+        OnStartLevelBuild = () => { };
+
+        OnUpdateReadyState = (page) => { };
+    }
+
     public static void FakeClosurePatch(Harmony harmony)
     {
         ClassInjector.RegisterTypeInIl2Cpp<GeneticRundown>();
 
         harmony.Patch(
+            typeof(GS_Lobby).GetMethod("TryStartLevelTrigger"),
+            prefix: new HarmonyMethod(typeof(GeneticRundown), "CallOnTryStartLevel")
+        );
+
+        harmony.Patch(
+            typeof(CM_PageLoadout).GetMethod("UpdateReadyState"),
+            postfix: new HarmonyMethod(typeof(GeneticRundown), "CallOnUpdateReadyState")
+        );
+
+        harmony.Patch(
             typeof(LevelGeneration.Builder).GetMethod("Build"),
-            prefix: new HarmonyMethod(typeof(GeneticRundown).GetMethod("CallOnStartLevelBuild"))
+            prefix: new HarmonyMethod(typeof(GeneticRundown), "CallOnStartLevelBuild")
         );
     }
 
-    // See Note [In Search of Closures] in GTFR.Main.
-    private static event Action OnStartLevelBuild = () => { };
-    public static void CallOnStartLevelBuild() => OnStartLevelBuild();
-
-    public static void CreateGeneticRundown(ManualLogSource log, ChromosomeTransfer transfer)
+    private enum BuildState
     {
-        OnStartLevelBuild += () =>
+        NeedRebuild,
+        Evolving,
+        WaitingForChromosome,
+        ReadyToDrop,
+    }
+
+    public static void CreateGeneticRundown(ManualLogSource log)
+    {
+        Chromosome chromosome = null;
+        var transfer = new ChromosomeTransfer();
+
+        var state = BuildState.NeedRebuild;
+
+        void buildLevel()
         {
             var active = RundownManager.ActiveExpedition;
-            var random = new System.Random (active.SessionSeed);
-            var level = LevelLayoutDataBlock.GetBlock (active.LevelLayoutData);
+            var level = LevelLayoutDataBlock.GetBlock(active.LevelLayoutData);
+
+            var random = new Random(active.SessionSeed);
+
+            var result = RunGenetic(log, random, level.Zones.Count);
+
+            chromosome = result;
+            NetworkAPI.InvokeFreeSizedEvent("awaitDNA", result.ToBytes());
+
+            state = BuildState.ReadyToDrop;
+        }
+
+        void awaitLevel()
+        {
+            var active = RundownManager.ActiveExpedition;
+            var level = LevelLayoutDataBlock.GetBlock(active.LevelLayoutData);
 
             transfer.Reset();
 
-            if (SNet.IsMaster)
+            log.LogInfo("Waiting for level chromosome...");
+            transfer.Wait();
+            log.LogInfo("Chromosome received!");
+
+            chromosome = transfer.Result;
+
+            state = BuildState.ReadyToDrop;
+        }
+
+        OnTryStartLevel = (ref bool __result) =>
+        {
+            __result = false;
+
+            if (state is BuildState.ReadyToDrop)
             {
-                var chromosome = RunGenetic(log, random, level.Zones.Count);
-    
-                var rundown = GeneticRundown.FromChromosome(chromosome, level.Zones.Count);
-
-                for (int i = 0; i < Math.Min(level.Zones.Count, rundown.Count); i++) {
-                    log.LogInfo($"Zone {i}: {rundown[i].Show()}");
-                    rundown[i].SetupZone(log, level.Zones[i]);
-                }
-
-                NetworkAPI.InvokeFreeSizedEvent("awaitDNA", chromosome.ToBytes());
+                state = BuildState.NeedRebuild;
+                return true;
             }
-            else
-            {
-                log.LogInfo("Waiting for level chromosome...");
-                transfer.Wait();
-                log.LogInfo("Chromosome received!");
-    
-                var rundown = GeneticRundown.FromChromosome(transfer.Result, level.Zones.Count);
 
-                for (int i = 0; i < Math.Min(level.Zones.Count, rundown.Count); i++) {
-                    // log.LogInfo($"Zone {i}: {rundown[i].Show()}");
-                    rundown[i].SetupZone(log, level.Zones[i]);
+            if (state is BuildState.NeedRebuild)
+            {
+                if (SNet.IsMaster)
+                {
+                    state = BuildState.Evolving;
+                    Task.Run(buildLevel);
                 }
+                else
+                {
+                    state = BuildState.WaitingForChromosome;
+                    Task.Run(awaitLevel);
+                }
+            }
+
+            return false;
+        };
+
+        OnUpdateReadyState = (page) =>
+        {
+            if (state is BuildState.Evolving or BuildState.WaitingForChromosome)
+            {
+                page.m_dropButton.gameObject.SetActive(false);
+                page.m_readyButton.gameObject.SetActive(false);
+            }
+
+            if (state is BuildState.ReadyToDrop)
+            {
+                GameStateManager.CurrentState.TryStartLevelTrigger();
+            }
+        };
+
+        OnStartLevelBuild = () =>
+        {
+            var active = RundownManager.ActiveExpedition;
+            var level = LevelLayoutDataBlock.GetBlock(active.LevelLayoutData);
+
+            var rundown = FromChromosome(chromosome, level.Zones.Count);
+
+            for (int i = 0; i < Math.Min(level.Zones.Count, rundown.Count); i++)
+            {
+                log.LogInfo($"Zone {i}: {rundown[i].Show()}");
+                rundown[i].SetupZone(log, level.Zones[i]);
             }
         };
     }
