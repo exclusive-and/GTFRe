@@ -1,0 +1,57 @@
+Melee:
+    Easy:       24 (Striker)
+    Medium:     24 (Striker), 28 (Giant)
+    Hard:       24 (Striker), 28 (Giant)
+    Biss:       21 (Shadow)
+    Buss:       35 (Shadow Giant)
+
+Ranged:
+    Easy:       26 (Shooter)
+    Medium:     18 (Chicken), 26 (Shooter)
+    Hard:       18 (Chicken), 26 (Shooter)
+
+Scout:
+    Easy:       20 (Scout)
+    Medium:     20 (Scout)
+    Hard:       20 (Scout)
+    MiniBoss:   41 (Charger Scout)
+    Boss:       40 (Shadow Scout)
+    MegaBoss:   54 (Zoomer Scout)
+    Biss:       56 (Nightmare Scout)
+
+PureSneak:
+    Easy:       28 (Giant)
+    Medium:     18 (Chicken), 28 (Giant)
+    Hard:       36 (Mother)
+    Biss:       33 (Hybrid)
+    Boss:       44 (Kraken)
+    MiniBoss:   37 (P-Mother)
+    MegaBoss:   29 (Tank)
+
+BirtherChild:
+    Easy:       38 (Baby)
+    Biss:       42 (Flyer)
+    Buss:       38 (Baby)
+
+Hunter:
+    Easy:       33 (Hybrid)
+    Medium:     33 (Hybrid)
+    Hard:       36 (Mother)
+    MiniBoss:   37 (P-Mother)
+    MegaBoss:   29 (Tank)
+    Buss:       16 (Giant)
+    Biss:       46 (Snatcher)
+
+Boss:
+    Boss:       37 (P-Mother)
+
+MiniBoss:
+    MiniBoss:   36 (Mother)
+    MegaBoss:   29 (Tank)
+
+Lurker:
+    Easy:       30 (Charger)
+    Medium:     30 (Charger)
+    Hard:       39 (Charger Giant)
+    Biss:       53 (Nightmare Striker)
+    Buss:       52 (Nightmare Shooter)

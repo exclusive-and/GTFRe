@@ -1,0 +1,30 @@
+Hibernate Variants:
+    Easy:
+        1.  Hibernate Easy Mix              0.75 Melee, 0.25 Ranged
+        8.  Hibernate Easy Small Mix A      0.50 Melee, 0.50 Ranged
+        9.  Hibernate Easy Small Mix B      0.75 Melee, 0.25 Ranged
+        10. Hibernate Easy Tiny Melee       1.00 Melee
+        11. Hibernate Easy Tiny Mix B       0.75 Melee, 0.25 Ranged
+        12. Hibernate Easy Tiny Mix A       0.75 Melee, 0.25 Ranged
+
+    Medium:
+        13. Hibernate Medium Small Mix A    0.50 Melee, 0.50 Ranged
+        14. Hibernate Medium Tiny Mix A     0.75 Melee, 0.25 Ranged
+        15. Hibernate Medium Tiny Mix B     0.75 Melee, 0.25 Ranged
+        16. Hibernate Medium Mix B          0.75 Melee, 0.25 Ranged
+        55. Hibernate Medium Small Mix B    0.75 Melee, 0.25 Ranged
+
+    Hard:
+        17. Hibernate Hard Mix Scout        0.75 Melee, 0.25 Ranged, 1.00 Scout
+        18. Hibernate Hard Small Mix Scout  0.75 Melee, 0.25 Ranged, 1.00 Scout
+        19. Hibernate Hard Large Mix Scout  0.75 Melee, 0.25 Ranged, 1.00 Scout
+        57. Hibernate Hard Large Mix        0.75 Melee, 0.25 Ranged
+        58. Hibernate Hard Small Mix A      0.75 Melee, 0.25 Ranged
+        59. Hibernate Hard Small Mix B      0.75 Melee, 0.25 Ranged
+
+    Biss:
+        7.  Hibernate Biss Large Melee Shadows  1.00 Melee
+        60. Hibernate Biss Melee Shadows        1.00 Melee
+        61. Hibernate Biss Small Melee Shadows  1.00 Melee
+
+

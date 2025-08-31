@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import
+        Project="$(MSBuildThisFileDirectory)/../GameFolder.props"
+        Condition="Exists('$(MSBuildThisFileDirectory)/../GameFolder.props')"
+        />
+
+    <PropertyGroup>
+        <RootNamespace>GTFR</RootNamespace>
+        <AssemblyName>GTFR</AssemblyName>
+
+        <PluginOutputPath>../output/GTFRe/plugins</PluginOutputPath>
+        <CopyBuildToPluginFolder>true</CopyBuildToPluginFolder>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TSName>GTFR:evolution</TSName>
+        <TSAuthor>microchips-n-dip</TSAuthor>
+        <TSWebsite>https://github.com/exclusive-and/GTFRe</TSWebsite>
+        <TSDescription>GTFO randomizer evolved... literally!</TSDescription>
+    </PropertyGroup>
+
+    <PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>10.0</LangVersion>
+		<DefineConstants>$(DefineConstants);BepInEx;IL2CPP;Il2CppInterop</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<ImplicitUsings>enable</ImplicitUsings>
+
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+		<GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+		
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+
+		<Configurations>Debug;Release</Configurations>
+		<Platforms>AnyCPU</Platforms>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+    
+	<ItemGroup>
+		<!-- Mark the property as compiler aware, so it's added to the editor config-->
+		<CompilerVisibleProperty Include="TSName" />
+		<CompilerVisibleProperty Include="TSAuthor" />
+		<CompilerVisibleProperty Include="TSVersion" />
+		<CompilerVisibleProperty Include="TSWebsite" />
+		<CompilerVisibleProperty Include="TSDescription" />
+	</ItemGroup>
+
+    <PropertyGroup>
+        <BepInExPath>$(GameFolder)/BepInEx/core</BepInExPath>
+        <CorePath>$(GameFolder)/dotnet</CorePath>
+        <InteropPath>$(GameFolder)/BepInEx/interop</InteropPath>
+        <PluginsPath>$(GameFolder)/BepInEx/plugins</PluginsPath>
+    </PropertyGroup>
+
+	<!-- BepInEx libs -->
+	<ItemGroup>
+		<Reference Include="$(BepInExPath)/BepInEx.*.dll" Private="false" />
+		<Reference Include="$(BepInExPath)/0Harmony.dll" Private="false" />
+		<Reference Include="$(BepInExPath)/MonoMod.RuntimeDetour.dll" Private="false" />
+		<Reference Include="$(BepInExPath)/Il2CppInterop.*.dll" Private="false" />
+	</ItemGroup>
+	
+	<!-- Interop -->
+	<ItemGroup>
+		<Reference Include="$(InteropPath)/*.dll" Private="false" />
+		<Reference Remove="$(InteropPath)/netstandard.dll" />
+		<Reference Remove="$(InteropPath)/Newtonsoft.Json.dll" />
+	</ItemGroup>
+
+	<!-- Other Dependencies -->
+	<ItemGroup>
+		<Reference Include="$(PluginsPath)/GTFO-API.dll" Private="false" />
+	</ItemGroup>
+
+	<!-- MSBuild Actions -->
+	<Target Name="CopyAssemblyAfterBuild" AfterTargets="Build" Condition="'$(PluginOutputPath)' != ''">
+		<MakeDir Directories="$(PluginOutputPath)" Condition="!Exists('$(PluginOutputPath)')"  />
+		<Message Text="Copying Assembly to Ouput Folder..." />
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).dll"
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).dll"/>
+		<Copy SourceFiles="$(OutputPath)\$(AssemblyName).xml"
+			  DestinationFiles="$(PluginOutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')"/>
+
+		<Message Text="Assembly has been copied to Output Folder!" Importance="High"/>
+	</Target>
+</Project>

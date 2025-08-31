@@ -1,0 +1,36 @@
+Strikers:
+    Normal:     Hibernate Easy, Hibernate Medium, Hibernate Hard
+    Baby:       PureSneak Buss
+    Shadow:     Hibernate Biss
+    Charger:    Detect Easy, Detect Medium
+    Nightmare:  Detect Biss
+
+Giants:
+    Normal:     Hibernate Medium, Hibernate Hard
+    Shadow:     Hibernate Buss
+    Charger:    Detect Hard
+
+Shooters:
+    Normal:     Hibernate Easy, Hibernate Medium, Hibernate Hard
+    Chicken:    Hibernate Medium, Hibernate Hard
+    Hybrid:     PureSneak Biss
+    Nightmare:  Detect Buss
+
+Scouts:
+    Normal:     PureDetect Easy, PureDetect Medium, PureDetect Hard, Hibernate Hard
+    Shadow:     PureDetect Boss
+    Charger:    PureDetect MiniBoss
+    Zoomer:     PureDetect MegaBoss
+    Nightmare:  PureDetect Biss, PureDetect Buss
+
+Bosses:
+    Mother:     Hibernate MiniBoss, PureSneak Hard
+    P-Mother:   PureSneak MiniBoss
+    Tank:       Hibernate MegaBoss, PureSneak MegaBoss
+
+Hunters:
+    Normal:     Hunter Easy
+    Hard:       Hunter Buss
+    Mother:     Hunter Hard
+    P-Mother:   Hunter MiniBoss
+    Tank:       Hunter MegaBoss
