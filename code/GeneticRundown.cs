@@ -144,6 +144,7 @@ public class GeneticRundown : UnityEngine.MonoBehaviour
             if (state is BuildState.Evolving or BuildState.WaitingForChromosome)
             {
                 page.m_dropButton.gameObject.SetActive(false);
+                page.m_changeLoadoutButton.gameObject.SetActive(false);
                 page.m_readyButton.gameObject.SetActive(false);
             }
 
@@ -173,7 +174,7 @@ public class GeneticRundown : UnityEngine.MonoBehaviour
         const int minPopulation = 16384;
         const int maxIterations = 64;
         const int numElites = 1024;
-        const float threshold = 20.0f;
+        const float threshold = 100.0f;
 
         var crossover = new OnePointCrossover(0.75f);
         var mutation = new MultiMutation(
@@ -183,7 +184,7 @@ public class GeneticRundown : UnityEngine.MonoBehaviour
             });
 
         var fitness = new GeneticRundown.Fitness(numZones);
-        var termination = new GeneticRundown.Termination(0.85f * (float) numZones, fitness);
+        var termination = new GeneticRundown.Termination(0.875f * numZones, fitness);
             
         var algo = new Algorithm(minPopulation, maxIterations, numElites, fitness, crossover, mutation, termination);
 

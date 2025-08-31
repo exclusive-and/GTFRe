@@ -9,7 +9,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
 
-[BepInPlugin ("GTFRevolution", "GTFRevolution", "1.1.2")]
+[BepInPlugin ("GTFRevolution", "GTFRevolution", "1.1.3")]
 public class Main : BasePlugin
 {
     public override void Load() => HahaInternal.HahaFunny(Log);
